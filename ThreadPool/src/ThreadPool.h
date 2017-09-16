@@ -5,10 +5,35 @@
 #ifndef THREADPOOL_THREADPOOL_H
 #define THREADPOOL_THREADPOOL_H
 
+#include <vector>
+#include <thread>
+#include <future>
+#include <functional>
+#include <mutex>
+#include <queue>
+#include <condition_variable>
 
-class ThreadPool {
 
-};
+namespace toy {
+	class ThreadPool {
+	public:
+		ThreadPool(int nWorkers);
 
+		~ThreadPool();
+
+		void add(std::function<void()> task);
+
+	private:
+		void keepConsuming();
+
+		std::vector<std::thread> _workers;
+		std::queue<std::function<void()>> _tasks;
+		std::mutex _taskQueueMutex;
+		std::condition_variable _hasNewTask;
+		int _nTodoTasks;
+		std::mutex _nTodoTasksMutex;
+		std::condition_variable _noTodoTask;
+	};
+}
 
 #endif //THREADPOOL_THREADPOOL_H
