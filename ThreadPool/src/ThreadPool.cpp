@@ -10,7 +10,6 @@ namespace toy {
 		for (int i = 0; i < nWorkers; ++i) {
 			std::function<void()> func = std::bind(&ThreadPool::keepConsuming, this);
 			_workers.emplace_back(func);
-//			_workers.back().detach();
 		}
 	}
 
@@ -27,7 +26,7 @@ namespace toy {
 		}
 		_taskChangedCV.notify_all();
 		for (auto &worker : _workers) {
-			worker.detach();
+			worker.join();
 		}
 	}
 
@@ -40,7 +39,6 @@ namespace toy {
 					return !_tasks.empty() || _killingThreads;
 				});
 				if (_killingThreads) {
-//					std::cerr << std::this_thread::get_id() << " finishes" << std::endl;
 					break;
 				} else {
 					task = _tasks.front();
@@ -53,8 +51,6 @@ namespace toy {
 				--_nTodoTasks;
 				if (!_nTodoTasks) {
 					_noTodoTask.notify_all();
-				} else {
-					_taskChangedCV.notify_all();
 				}
 			}
 		}
