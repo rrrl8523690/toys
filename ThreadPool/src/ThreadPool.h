@@ -21,8 +21,10 @@ namespace toy {
 
 		~ThreadPool();
 
+		// TODO: support more types of tasks
 		void add(std::function<void()> task);
 
+		// TODO: add wait() method to wait all jobs to be done
 	private:
 		void keepConsuming();
 
