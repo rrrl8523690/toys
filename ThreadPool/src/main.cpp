@@ -7,7 +7,7 @@ int main() {
 	std::mutex cntMutex;
 	int cnt = 0;
 	for (int i = 0; i < 20; ++i) {
-		tp.add([&]() {
+		tp.addTask([&]() {
 			for (int j = 0; j < 10000; ++j) {
 				std::unique_lock<std::mutex> cntLock(cntMutex);
 				++cnt;

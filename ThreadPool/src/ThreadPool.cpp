@@ -10,11 +10,13 @@ namespace toy {
 		for (int i = 0; i < nWorkers; ++i) {
 			std::function<void()> func = std::bind(&ThreadPool::keepConsuming, this);
 			_workers.emplace_back(func);
-			_workers.back().detach();
+//			_workers.back().detach();
 		}
 	}
 
 	ThreadPool::~ThreadPool() {
+		// TODO: shall it be a loop?
+		// TODO: destroy threads
 		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
 		_noTodoTask.wait(nTodoTasksLock, [&]() {
 			return !_nTodoTasks;
@@ -45,7 +47,7 @@ namespace toy {
 		}
 	}
 
-	void ThreadPool::add(std::function<void()> task) {
+	void ThreadPool::addTask(std::function<void()> task) {
 		std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
 		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
 		++_nTodoTasks;
