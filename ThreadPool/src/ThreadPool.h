@@ -15,6 +15,7 @@
 
 
 namespace toy {
+	// Current policy: assume that all jobs are added before the destruction of ThreadPool. When going to destruct ThreadPool, wait for all jobs to finish, and then reap all the threads.
 	class ThreadPool {
 	public:
 		ThreadPool(int nWorkers);
@@ -30,11 +31,15 @@ namespace toy {
 
 		std::vector<std::thread> _workers;
 		std::queue<std::function<void()>> _tasks;
+
 		std::mutex _taskQueueMutex;
-		std::condition_variable _hasNewTask;
+		std::condition_variable _taskChangedCV;
+
 		int _nTodoTasks;
 		std::mutex _nTodoTasksMutex;
 		std::condition_variable _noTodoTask;
+
+		bool _killingThreads;
 	};
 }
 

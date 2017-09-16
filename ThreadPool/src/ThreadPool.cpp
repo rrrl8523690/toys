@@ -6,7 +6,7 @@
 #include "ThreadPool.h"
 
 namespace toy {
-	ThreadPool::ThreadPool(int nWorkers) : _nTodoTasks(0) {
+	ThreadPool::ThreadPool(int nWorkers) : _nTodoTasks(0), _killingThreads(false) {
 		for (int i = 0; i < nWorkers; ++i) {
 			std::function<void()> func = std::bind(&ThreadPool::keepConsuming, this);
 			_workers.emplace_back(func);
@@ -21,6 +21,14 @@ namespace toy {
 		_noTodoTask.wait(nTodoTasksLock, [&]() {
 			return !_nTodoTasks;
 		});
+		{
+			std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
+			_killingThreads = true;
+		}
+		_taskChangedCV.notify_all();
+		for (auto &worker : _workers) {
+			worker.detach();
+		}
 	}
 
 	void ThreadPool::keepConsuming() {
@@ -28,11 +36,16 @@ namespace toy {
 			std::function<void()> task;
 			{
 				std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
-				_hasNewTask.wait(taskQueueLock, [&]() {
-					return !_tasks.empty();
+				_taskChangedCV.wait(taskQueueLock, [&]() {
+					return !_tasks.empty() || _killingThreads;
 				});
-				task = _tasks.front();
-				_tasks.pop();
+				if (_killingThreads) {
+//					std::cerr << std::this_thread::get_id() << " finishes" << std::endl;
+					break;
+				} else {
+					task = _tasks.front();
+					_tasks.pop();
+				}
 			}
 			task();
 			{
@@ -41,7 +54,7 @@ namespace toy {
 				if (!_nTodoTasks) {
 					_noTodoTask.notify_all();
 				} else {
-					_hasNewTask.notify_all();
+					_taskChangedCV.notify_all();
 				}
 			}
 		}
@@ -52,7 +65,7 @@ namespace toy {
 		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
 		++_nTodoTasks;
 		_tasks.emplace(move(task));
-		_hasNewTask.notify_all();
+		_taskChangedCV.notify_all();
 	}
 }
 
