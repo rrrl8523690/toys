@@ -14,8 +14,6 @@ namespace toy {
 	}
 
 	ThreadPool::~ThreadPool() {
-		// TODO: shall it be a loop?
-		// TODO: destroy threads
 		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
 		_noTodoTask.wait(nTodoTasksLock, [&]() {
 			return !_nTodoTasks;
@@ -61,7 +59,7 @@ namespace toy {
 		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
 		++_nTodoTasks;
 		_tasks.emplace(move(task));
-		_taskChangedCV.notify_all();
+		_taskChangedCV.notify_one();
 	}
 }
 
