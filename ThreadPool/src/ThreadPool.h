@@ -20,7 +20,15 @@ namespace toy {
 	public:
 		ThreadPool(int nWorkers);
 
+		ThreadPool(const ThreadPool &other) = delete;
+
+		ThreadPool(ThreadPool &&other) = delete;
+
 		~ThreadPool();
+
+		ThreadPool &operator=(const ThreadPool &other) = delete;
+
+		ThreadPool &operator=(ThreadPool &&other) = delete;
 
 		// TODO: support more types of tasks
 		void addTask(std::function<void()> task);
