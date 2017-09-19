@@ -35,18 +35,19 @@ namespace toy {
 
 		ThreadPool &operator=(ThreadPool &&other) = delete;
 
-		// TODO: support more types of tasks
-//		template<class Callable, class ...Args>
-//		std::future<typename std::result_of<Callable((Args...))>::type> addTask(Callable &&f, Args &&...args);
-
 		template<class Callable, class ...Args>
 		std::future<typename std::result_of<Callable(Args...)>::type> addTask(Callable &&f, Args &&... args);
 
-		// TODO: add wait() method to wait all jobs to be done
+		void wait();
+
+		void terminate(bool isAsync);
+
+
 	private:
 		void keepConsuming();
 
 		const DestructionMode _destructionMode;
+		bool _done;
 
 		std::vector<std::thread> _workers;
 		std::queue<std::function<void()>> _tasks;

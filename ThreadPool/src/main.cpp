@@ -17,9 +17,12 @@ int main() {
 		});
 		results.emplace_back(std::move(res));
 	}
-	delete tp;
+//	delete tp;
+//	tp->wait();
+//	tp->terminate(true);
 	std::cerr << cnt << std::endl;
 	auto duration = std::chrono::high_resolution_clock::now() - now;
 	std::cerr << "Time consumed: " << (duration.count() * 1e-6) << "ms" << std::endl;
+	delete tp;
 	return 0;
 }
