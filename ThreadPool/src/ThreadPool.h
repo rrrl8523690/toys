@@ -19,7 +19,11 @@ namespace toy {
 	// Current policy: assume that all jobs are added before the destruction of ThreadPool. When going to destruct ThreadPool, wait for all jobs to finish, and then reap all the threads.
 	class ThreadPool {
 	public:
-		ThreadPool(int nWorkers);
+		enum class DestructionMode {
+			WAIT, TERMINATE, TERMINATE_ASYNC
+		};
+
+		ThreadPool(int nWorkers, DestructionMode mode = DestructionMode::WAIT);
 
 		ThreadPool(const ThreadPool &other) = delete;
 
@@ -41,6 +45,8 @@ namespace toy {
 		// TODO: add wait() method to wait all jobs to be done
 	private:
 		void keepConsuming();
+
+		const DestructionMode _destructionMode;
 
 		std::vector<std::thread> _workers;
 		std::queue<std::function<void()>> _tasks;

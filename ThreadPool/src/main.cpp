@@ -4,8 +4,7 @@
 
 
 int main() {
-	using namespace toy;
-	auto tp = new ThreadPool(3);
+	auto tp = new toy::ThreadPool(3, toy::ThreadPool::DestructionMode::WAIT);
 	std::atomic<int> cnt(0);
 	auto now = std::chrono::high_resolution_clock::now();
 	std::vector<std::future<int> > results;
