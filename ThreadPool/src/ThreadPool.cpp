@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <future>
 #include "ThreadPool.h"
 
 namespace toy {
@@ -39,7 +40,7 @@ namespace toy {
 				if (_killingThreads) {
 					break;
 				} else {
-					task = _tasks.front();
+					task = std::move(_tasks.front());
 					_tasks.pop();
 				}
 			}
@@ -54,12 +55,6 @@ namespace toy {
 		}
 	}
 
-	void ThreadPool::addTask(std::function<void()> task) {
-		std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
-		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
-		++_nTodoTasks;
-		_tasks.emplace(move(task));
-		_taskChangedCV.notify_one();
-	}
+
 }
 

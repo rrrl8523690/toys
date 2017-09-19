@@ -2,17 +2,21 @@
 #include "ThreadPool.h"
 #include <atomic>
 
+
 int main() {
 	using namespace toy;
 	auto tp = new ThreadPool(3);
 	std::atomic<int> cnt(0);
 	auto now = std::chrono::high_resolution_clock::now();
+	std::vector<std::future<int> > results;
 	for (int i = 0; i < 20000; ++i) {
-		tp->addTask([&]() {
+		auto res = tp->addTask([&]() {
 			for (int j = 0; j < 1000; ++j) {
 				++cnt;
 			}
+			return cnt.load();
 		});
+		results.emplace_back(std::move(res));
 	}
 	delete tp;
 	std::cerr << cnt << std::endl;

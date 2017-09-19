@@ -10,6 +10,7 @@
 #include <future>
 #include <functional>
 #include <mutex>
+#include <memory>
 #include <queue>
 #include <condition_variable>
 
@@ -31,7 +32,11 @@ namespace toy {
 		ThreadPool &operator=(ThreadPool &&other) = delete;
 
 		// TODO: support more types of tasks
-		void addTask(std::function<void()> task);
+//		template<class Callable, class ...Args>
+//		std::future<typename std::result_of<Callable((Args...))>::type> addTask(Callable &&f, Args &&...args);
+
+		template<class Callable, class ...Args>
+		std::future<typename std::result_of<Callable(Args...)>::type> addTask(Callable &&f, Args &&... args);
 
 		// TODO: add wait() method to wait all jobs to be done
 	private:
@@ -49,6 +54,21 @@ namespace toy {
 
 		bool _killingThreads;
 	};
+
+	template<class Callable, class ...Args>
+	std::future<typename std::result_of<Callable(Args...)>::type> ThreadPool::addTask(Callable &&f, Args &&... args) {
+		std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
+		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
+		++_nTodoTasks;
+		using result_type = typename std::result_of<Callable((Args...))>::type;
+		auto tsk = std::bind(std::forward<Callable>(f), std::forward<Args>(args)...);
+		auto task = std::make_shared<std::packaged_task<result_type()>>(std::packaged_task<result_type()>(tsk));
+		auto result = task->get_future();
+		_tasks.emplace([task]() { (*task)(); });
+		_taskChangedCV.notify_one();
+		return result;
+	}
 }
+
 
 #endif //THREADPOOL_THREADPOOL_H
