@@ -8,7 +8,7 @@
 
 namespace toy {
 	ThreadPool::ThreadPool(int nWorkers, DestructionMode mode)
-					: _nTodoTasks(0), _killingThreads(false), _destructionMode(mode), _done(false) {
+					: _killingThreads(false), _destructionMode(mode), _done(false) {
 		for (int i = 0; i < nWorkers; ++i) {
 			std::function<void()> func = std::bind(&ThreadPool::keepConsuming, this);
 			_workers.emplace_back(func);
@@ -50,10 +50,9 @@ namespace toy {
 			}
 			task();
 			{
-				std::unique_lock<std::mutex> nRunningTasksLock(_nTodoTasksMutex);
-				--_nTodoTasks;
-				if (!_nTodoTasks) {
-					_noTodoTask.notify_all();
+				std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
+				if (_tasks.empty()) {
+					_noTodoTaskCV.notify_one();
 				}
 			}
 		}
@@ -62,11 +61,10 @@ namespace toy {
 	void ThreadPool::wait() {
 		_done = true;
 		{
-			std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
-			_noTodoTask.wait(nTodoTasksLock, [&]() {
-				return !_nTodoTasks;
-			});
 			std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
+			_noTodoTaskCV.wait(taskQueueLock, [&]() {
+				return _tasks.empty();
+			});
 			_killingThreads = true;
 			_taskChangedCV.notify_all();
 		}

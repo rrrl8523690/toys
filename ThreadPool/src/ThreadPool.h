@@ -55,9 +55,7 @@ namespace toy {
 		std::mutex _taskQueueMutex;
 		std::condition_variable _taskChangedCV;
 
-		int _nTodoTasks;
-		std::mutex _nTodoTasksMutex;
-		std::condition_variable _noTodoTask;
+		std::condition_variable _noTodoTaskCV;
 
 		bool _killingThreads;
 	};
@@ -65,8 +63,6 @@ namespace toy {
 	template<class Callable, class ...Args>
 	std::future<typename std::result_of<Callable(Args...)>::type> ThreadPool::addTask(Callable &&f, Args &&... args) {
 		std::unique_lock<std::mutex> taskQueueLock(_taskQueueMutex);
-		std::unique_lock<std::mutex> nTodoTasksLock(_nTodoTasksMutex);
-		++_nTodoTasks;
 		using result_type = typename std::result_of<Callable((Args...))>::type;
 		auto tsk = std::bind(std::forward<Callable>(f), std::forward<Args>(args)...);
 		auto task = std::make_shared<std::packaged_task<result_type()>>(std::packaged_task<result_type()>(tsk));
