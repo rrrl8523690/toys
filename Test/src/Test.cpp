@@ -3,27 +3,46 @@
 //
 
 #include <sstream>
+#include <iostream>
 #include "Test.h"
 
 namespace toy {
 	std::string Test::coloredText(const std::string &text, TextColor textColor, BackgroundColor backgroundColor) {
 		std::ostringstream ss;
-		ss << "\033[" << static_cast<int>(textColor) << "m";
-		ss << "\033[" << static_cast<int>(backgroundColor) << "m";
+		if (textColor != TextColor::DEFAULT) {
+			ss << "\033[" << static_cast<int>(textColor) << "m";
+		}
+		if (backgroundColor != BackgroundColor::DEFAULT) {
+			ss << "\033[" << static_cast<int>(backgroundColor) << "m";
+		}
 		ss << text;
+		// Text and background share the same RESET code.
 		ss << "\033[" << static_cast<int>(TextColor::RESET) << "m";
-		ss << "\033[" << static_cast<int>(BackgroundColor::RESET) << "m";
 		return ss.str();
 	}
 
-	void Test::expect(bool condition) {
+	std::string Test::boldText(const std::string &text) {
+		return "\033[1m" + text + "\033[21m";
+	}
+
+	void Test::fail(const std::string &filePath, int lineNumber, const std::string &msg) {
+		auto fileName = filePath.substr(filePath.find_last_of("/") + 1);
+		auto resultMsg =
+						boldText(coloredText("ERROR at " + fileName + "[" + std::to_string(lineNumber) + "]:", TextColor::RED,
+						                     BackgroundColor::GREEN)) + " " + msg;
+		std::cerr << resultMsg << std::endl;
+	}
+
+	void Test::expect(bool condition, const std::string &fileName, int lineNumber, const std::string &msg) {
 		++_nTestCase;
 		if (condition) { // ok
 			++_nPassedCase;
 		} else { // fail
-
+			fail(fileName, lineNumber, msg);
 		}
 	}
 
 	int Test::_nTestCase = 0, Test::_nPassedCase = 0;
 }
+
+

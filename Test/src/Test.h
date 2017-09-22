@@ -8,29 +8,41 @@
 #include <functional>
 
 namespace toy {
+	// Colors only supported in UNIX
 	enum class TextColor {
-		RED = 31, GREEN = 32, BLUE = 34, YELLOW = 33, BLACK = 30, WHITE = 37, RESET = 0
+		RED = 31, GREEN = 32, BLUE = 34, YELLOW = 33, BLACK = 30, WHITE = 37, RESET = 0, DEFAULT = -1
 	};
 
 	enum class BackgroundColor {
-		RED = 41, GREEN = 42, BLUE = 44, YELLOW = 43, BLACK = 40, WHITE = 47, RESET = 0
+		RED = 41, GREEN = 42, BLUE = 44, YELLOW = 43, BLACK = 40, WHITE = 47, RESET = 0, DEFAULT = -1
 	};
 
 	class Test {
 	public:
-		// Colors only supported in UNIX
+		Test() = delete;
 
-		static std::string coloredText(const std::string &text, TextColor textColor = TextColor::RESET,
-		                               BackgroundColor backgroundColor = BackgroundColor::RESET);
+		static std::string boldText(const std::string &text);
 
-		static void expect(bool condition);
+		static std::string coloredText(const std::string &text, TextColor textColor = TextColor::DEFAULT,
+		                               BackgroundColor backgroundColor = BackgroundColor::DEFAULT);
+
+
+		static void fail(const std::string &filePath, int lineNumber, const std::string &msg);
+
+		static void expect(bool condition, const std::string &fileName, int lineNumber, const std::string &msg);
 
 	private:
 //		std::string get
+	protected:
 		static int _nTestCase, _nPassedCase;
 	};
 
 }
+
+#define EXPECT(condition) \
+  do {\
+    expect(condition, __FILE__, __LINE__, std::string(#condition) + " not satisfied.");\
+  } while (0)
 
 
 #endif //TEST_TEST_H
