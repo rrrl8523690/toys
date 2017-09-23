@@ -25,6 +25,12 @@ namespace toy {
 		return "\033[1m" + text + "\033[21m";
 	}
 
+	void Test::summary() {
+		auto msg = std::to_string(_nPassedCase) + "/" + std::to_string(_nTestCase) + " cases passed.";
+		auto styledMsg = boldText(coloredText(msg, TextColor::GREEN));
+		std::cerr << styledMsg << std::endl;
+	}
+
 	void Test::fail(const std::string &filePath, int lineNumber, const std::string &msg) {
 		auto fileName = filePath.substr(filePath.find_last_of("/") + 1);
 		auto resultMsg =

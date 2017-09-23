@@ -19,30 +19,49 @@ namespace toy {
 
 	class Test {
 	public:
-		Test() = delete;
+
+		static void summary();
 
 		static std::string boldText(const std::string &text);
 
 		static std::string coloredText(const std::string &text, TextColor textColor = TextColor::DEFAULT,
 		                               BackgroundColor backgroundColor = BackgroundColor::DEFAULT);
 
-
 		static void fail(const std::string &filePath, int lineNumber, const std::string &msg);
 
 		static void expect(bool condition, const std::string &fileName, int lineNumber, const std::string &msg);
 
 	private:
-//		std::string get
+
 	protected:
+
 		static int _nTestCase, _nPassedCase;
 	};
 
 }
 
+#define TEST(NAME) \
+class TestClass_##NAME : public toy::Test \
+{\
+public:\
+  static void run() {\
+    testCases();\
+    summary();\
+  }\
+  static void testCases();\
+};\
+void TestClass_##NAME::testCases()
+
+#define RUN_TEST(NAME) \
+do { \
+  TestClass_##NAME::run();\
+} while(0)
+
+
 #define EXPECT(condition) \
-  do {\
-    expect(condition, __FILE__, __LINE__, std::string(#condition) + " not satisfied.");\
-  } while (0)
+do {\
+  expect(condition, __FILE__, __LINE__, std::string(#condition) + " not satisfied.");\
+} while (0)
 
 
 #endif //TEST_TEST_H

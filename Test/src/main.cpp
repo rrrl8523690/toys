@@ -3,10 +3,22 @@
 
 class Test1 : public toy::Test {
 public:
-	static void run() {
-		EXPECT(1 == 2);
+	virtual void testCases() {
+		EXPECT(1 == 1);
 //		EXPECT_EQ(1, 2);
 	}
+
+	static void run() {
+		auto t = new Test1();
+		t->testCases();
+		summary();
+	}
+};
+
+TEST(Test2) {
+	int a = 1, b = 2;
+	EXPECT(1 != 3);
+	EXPECT(a != b);
 };
 
 int main() {
@@ -15,6 +27,6 @@ int main() {
 //	cerr << "!!" << endl;
 //	cerr << Test::coloredText("hello world", TextColor::RED, BackgroundColor::GREEN) << endl;
 //	cerr << "!!" << endl;
-	Test1::run();
+	RUN_TEST(Test2);
 	return 0;
 }
