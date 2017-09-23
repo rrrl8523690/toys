@@ -26,12 +26,17 @@ namespace toy {
 	}
 
 	void Test::summary() {
+		auto nameText = boldText(coloredText("[" + _name + "]", TextColor::WHITE, BackgroundColor::BLUE));
+		std::cerr << nameText << " ";
 		auto msg = std::to_string(_nPassedCase) + "/" + std::to_string(_nTestCase) + " cases passed.";
-		auto styledMsg = boldText(coloredText(msg, TextColor::GREEN));
+		auto textColor = (_nTestCase == _nPassedCase) ? TextColor::GREEN : TextColor::RED;
+		auto styledMsg = boldText(coloredText(msg, textColor));
 		std::cerr << styledMsg << std::endl;
 	}
 
 	void Test::fail(const std::string &filePath, int lineNumber, const std::string &msg) {
+		auto nameText = boldText(coloredText("[" + _name + "]", TextColor::WHITE, BackgroundColor::BLUE));
+		std::cerr << nameText << " ";
 		auto fileName = filePath.substr(filePath.find_last_of("/") + 1);
 		auto resultMsg =
 						boldText(coloredText("ERROR at " + fileName + "[" + std::to_string(lineNumber) + "]:", TextColor::RED,
@@ -47,8 +52,6 @@ namespace toy {
 			fail(fileName, lineNumber, msg);
 		}
 	}
-
-	int Test::_nTestCase = 0, Test::_nPassedCase = 0;
 }
 
 

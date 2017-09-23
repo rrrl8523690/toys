@@ -20,41 +20,47 @@ namespace toy {
 	class Test {
 	public:
 
-		static void summary();
+		void summary();
 
 		static std::string boldText(const std::string &text);
 
 		static std::string coloredText(const std::string &text, TextColor textColor = TextColor::DEFAULT,
 		                               BackgroundColor backgroundColor = BackgroundColor::DEFAULT);
 
-		static void fail(const std::string &filePath, int lineNumber, const std::string &msg);
+		void fail(const std::string &filePath, int lineNumber, const std::string &msg);
 
-		static void expect(bool condition, const std::string &fileName, int lineNumber, const std::string &msg);
+		void expect(bool condition, const std::string &fileName, int lineNumber, const std::string &msg);
 
 	private:
 
 	protected:
-
-		static int _nTestCase, _nPassedCase;
+		int _nTestCase, _nPassedCase;
+		std::string _name;
 	};
-
 }
 
+#define TEST_CLASS(NAME) TestClass_##NAME
+
 #define TEST(NAME) \
-class TestClass_##NAME : public toy::Test \
+class TEST_CLASS(NAME) : public toy::Test \
 {\
 public:\
-  static void run() {\
+  TEST_CLASS(NAME) () {\
+    _nTestCase = 0; \
+    _nPassedCase = 0; \
+    _name = #NAME; \
+  } \
+  void run() {\
     testCases();\
     summary();\
   }\
-  static void testCases();\
-};\
-void TestClass_##NAME::testCases()
+  void testCases();\
+}; \
+void TEST_CLASS(NAME)::testCases()
 
 #define RUN_TEST(NAME) \
 do { \
-  TestClass_##NAME::run();\
+  TEST_CLASS(NAME)().run();\
 } while(0)
 
 
