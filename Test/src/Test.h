@@ -6,6 +6,7 @@
 #define TEST_TEST_H
 
 #include <functional>
+#include <vector>
 
 namespace toy {
 	// Colors only supported in UNIX
@@ -37,36 +38,48 @@ namespace toy {
 		int _nTestCase, _nPassedCase;
 		std::string _name;
 	};
+
+	std::vector<std::function<void()>> &allTests();
 }
 
 #define TEST_CLASS(NAME) TestClass_##NAME
 
 #define TEST(NAME) \
 class TEST_CLASS(NAME) : public toy::Test \
-{\
-public:\
-  TEST_CLASS(NAME) () {\
+{ \
+public: \
+  TEST_CLASS(NAME) () { \
     _nTestCase = 0; \
     _nPassedCase = 0; \
     _name = #NAME; \
   } \
-  void run() {\
-    testCases();\
-    summary();\
-  }\
-  void testCases();\
+  void run() { \
+    testCases(); \
+    summary(); \
+  } \
+  void testCases(); \
+private: \
+  static int _hack; \
 }; \
+int TEST_CLASS(NAME)::_hack = (toy::allTests().push_back([]() { TEST_CLASS(NAME)().run(); }), 0); \
 void TEST_CLASS(NAME)::testCases()
 
 #define RUN_TEST(NAME) \
 do { \
-  TEST_CLASS(NAME)().run();\
-} while(0)
+  TEST_CLASS(NAME)().run(); \
+} while (0)
+
+#define RUN_ALL_TESTS() \
+do { \
+  for (const auto &test : toy::allTests()) { \
+    test(); \
+  } \
+} while (0)
 
 
 #define EXPECT(condition) \
-do {\
-  expect(condition, __FILE__, __LINE__, std::string(#condition) + " not satisfied.");\
+do { \
+  expect(condition, __FILE__, __LINE__, std::string(#condition) + " not satisfied."); \
 } while (0)
 
 

@@ -3,13 +3,21 @@
 
 TEST(Test1) {
 	int a = 1, b = 2;
-	EXPECT(1 == 3);
 	EXPECT(a != b);
+	EXPECT(a < 2);
+	EXPECT(a < b);
 }
 
 TEST(Test2) {
 	EXPECT(2 == 2);
 }
+
+class A {
+public:
+	static void p() {
+		std::cerr << "!" << std::endl;
+	}
+};
 
 int main() {
 	using namespace std;
@@ -17,7 +25,7 @@ int main() {
 //	cerr << "!!" << endl;
 //	cerr << Test::coloredText("hello world", TextColor::RED, BackgroundColor::GREEN) << endl;
 //	cerr << "!!" << endl;
-	RUN_TEST(Test1);
-	RUN_TEST(Test2);
+
+	RUN_ALL_TESTS();
 	return 0;
 }

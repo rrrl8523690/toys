@@ -52,6 +52,11 @@ namespace toy {
 			fail(fileName, lineNumber, msg);
 		}
 	}
+
+	std::vector<std::function<void()>> &allTests() {
+		static std::vector<std::function<void()>> allTests_;
+		return allTests_;
+	}
 }
 
 
