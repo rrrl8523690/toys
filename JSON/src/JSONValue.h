@@ -14,6 +14,8 @@ namespace toy {
 	public:
 		using string_t = std::wstring;
 
+//		JSONValue(const JSONValue &other) = delete;
+
 
 		// The derived classes are responsible to delete _valuePtr.
 		virtual ~JSONValue() {
@@ -28,7 +30,7 @@ namespace toy {
 		}
 
 		JSONValue &operator=(JSONValue value) {
-			reset(value);
+			reset(std::move(value));
 			return *this;
 		}
 

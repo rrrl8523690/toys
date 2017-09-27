@@ -1,8 +1,9 @@
 #include <iostream>
-#include "src/JSONValue.h"
+#include "JSONValue.h"
+#include "JSONValueTest.h"
 
 int main() {
-	std::cout << "Hello, World!" << std::endl;
+	RUN_ALL_TESTS();
 	toy::JSONString a(L"sdfa");
 	toy::JSONString b("sdfa");
 	toy::JSONString c(std::string("sdfa"));
