@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <vector>
+#include <string>
 
 namespace toy {
 	// Colors only supported in UNIX
