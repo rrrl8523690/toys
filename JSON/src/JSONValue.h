@@ -10,6 +10,8 @@
 #include <string>
 #include <map>
 
+
+// TODO: RE-design!!!!!
 namespace toy {
 	class JSONValue {
 	public:
@@ -46,11 +48,11 @@ namespace toy {
 			return nullptr;
 		}
 
-		virtual std::vector<JSONValue> *getArray() {
+		virtual std::vector<JSONValue *> *getArray() {
 			return nullptr;
 		}
 
-		virtual std::map<string_t, JSONValue> *getMap() {
+		virtual std::map<string_t, JSONValue *> *getMap() {
 			return nullptr;
 		};
 
@@ -60,15 +62,11 @@ namespace toy {
 		Type _type;
 		void *_valuePtr;
 	private:
-		void reset(JSONValue value) {
-			this->swap(value);
+		void reset(JSONValue *value) {
+			std::swap(this->_type, value->_type);
+			std::swap(this->_valuePtr, value->_valuePtr);
 		}
 
-		// TODO: Fix
-		void swap(JSONValue &other) {
-			std::swap(_type, other._type);
-			std::swap(_valuePtr, other._valuePtr);
-		}
 	};
 
 	class JSONInt : public JSONValue {
@@ -134,17 +132,21 @@ namespace toy {
 
 	class JSONArray : public JSONValue {
 	public:
-		explicit JSONArray(std::vector<JSONValue> array) {
+		explicit JSONArray(std::vector<JSONValue *> array) {
 			_type = Type::ARRAY;
-			_valuePtr = new std::vector<JSONValue>(std::move(array));
+			_valuePtr = new std::vector<JSONValue *>(std::move(array));
 		}
 
 		~JSONArray() override {
-			delete getArray();
+			auto array = getArray();
+			for (auto &elem : (*array)) {
+				delete elem;
+			}
+			delete array;
 		}
 
-		std::vector<JSONValue> *getArray() override {
-			return static_cast<std::vector<JSONValue> *> (_valuePtr);
+		std::vector<JSONValue *> *getArray() override {
+			return static_cast<std::vector<JSONValue *> *> (_valuePtr);
 		}
 	};
 
