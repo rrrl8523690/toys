@@ -6,8 +6,17 @@
 #define JSON_JSONVALUETEST_H
 
 #include "Test.h"
+#include "JSONValue.h"
 
 TEST(JSON_VALUE) {
+	toy::JSONInt intVal(25);
+	EXPECT(intVal.type() == toy::JSONValue::Type::INT);
+
+	toy::JSONDouble doubleVal(25.0);
+	EXPECT(doubleVal.type() == toy::JSONValue::Type::DOUBLE);
+
+	toy::JSONString strVal("A json string");
+	EXPECT(strVal.type() == toy::JSONValue::Type::STRING);
 
 }
 
