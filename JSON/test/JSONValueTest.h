@@ -8,7 +8,7 @@
 #include "Test.h"
 
 TEST(JSON_VALUE) {
-	EXPECT(1 == 2);
+
 }
 
 #endif //JSON_JSONVALUETEST_H
