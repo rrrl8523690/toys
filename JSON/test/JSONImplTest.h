@@ -6,7 +6,7 @@
 #define JSON_JSONVALUETEST_H
 
 #include "Test.h"
-#include "JSONValue.h"
+#include "JSONImpl.h"
 
 TEST(JSON_VALUE) {
 	toy::JSONInt intVal(25);

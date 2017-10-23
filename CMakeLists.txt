@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(SOURCE_FILES
         JSON/src/JSON.cpp
         JSON/src/JSON.h
-        JSON/src/JSONValue.cpp
-        JSON/src/JSONValue.h
-        JSON/test/JSONValueTest.h
+        JSON/src/JSONImpl.cpp
+        JSON/src/JSONImpl.h
+        JSON/test/JSONImplTest.h
         JSON/CMakeLists.txt
         Test/src/Test.cpp
         Test/src/Test.h
