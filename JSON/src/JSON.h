@@ -7,16 +7,21 @@
 
 
 #include <istream>
+#include "JSONImpl.h"
 
 namespace toy {
+	namespace json_detail {
+		class JSONImpl;
+	}
 	class JSON {
+	public:
+	private:
+		// TODO: do we need this?
+//		void typeCheck(toy::JSONType expectedType) const;
+
+		std::unique_ptr<json_detail::JSONImpl> _impl;
 
 	};
-
-	namespace detail {
-		using istream_t = std::wistream;
-
-	}
 }
 
 

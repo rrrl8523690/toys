@@ -22,5 +22,5 @@ include_directories(JSON/test)
 include_directories(Test/src)
 include_directories(ThreadPool/src)
 
-add_executable(JSONTest ${SOURCE_FILES} JSON/src/main.cpp)
+add_executable(JSONTest ${SOURCE_FILES} JSON/src/main.cpp JSON/src/JSONTraits.h)
 add_library(toys SHARED ${SOURCE_FILES})
