@@ -53,10 +53,13 @@ namespace toy {
 		}
 	}
 
+	void TestFixture::init() {}
+
+	void TestFixture::cleanUp() {}
+
 	std::vector<std::function<void()>> &allTests() {
 		static std::vector<std::function<void()>> allTests_;
 		return allTests_;
 	}
 }
-
 
