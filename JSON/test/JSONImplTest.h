@@ -6,9 +6,9 @@
 #define JSON_JSONVALUETEST_H
 
 #include "Test.h"
-#include "JSONImpl.h"
+#include "../include/JSONImpl.h"
 
-TEST(JSONImpl) {
+TEST(JSONImplTest) {
 }
 
 #endif //JSON_JSONVALUETEST_H

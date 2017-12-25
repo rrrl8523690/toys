@@ -5,9 +5,9 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES
         JSON/src/JSON.cpp
-        JSON/src/JSON.h
+        JSON/include/JSON.h
         JSON/src/JSONImpl.cpp
-        JSON/src/JSONImpl.h
+        JSON/include/JSONImpl.h
         JSON/test/JSONImplTest.h
         JSON/CMakeLists.txt
         Test/src/Test.cpp
@@ -17,10 +17,9 @@ set(SOURCE_FILES
         ThreadPool/src/ThreadPool.h
         ThreadPool/CMakeLists.txt)
 
-include_directories(JSON/src)
-include_directories(JSON/test)
+include_directories(JSON/include)
 include_directories(Test/src)
 include_directories(ThreadPool/src)
 
-add_executable(JSONTest ${SOURCE_FILES} JSON/src/main.cpp JSON/src/JSONTraits.h)
+add_executable(JSONTest ${SOURCE_FILES} JSON/include/JSONTraits.h JSON/test/RunTest.cpp)
 add_library(toys SHARED ${SOURCE_FILES})

@@ -2,7 +2,7 @@
 // Created by Handa Wang on 9/24/17.
 //
 
-#include "JSON.h"
+#include "../include/JSON.h"
 
 namespace toy {
 //	TODO: do we need this?

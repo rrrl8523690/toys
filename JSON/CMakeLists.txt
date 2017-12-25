@@ -3,7 +3,8 @@ project(JSON)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(src)
+include_directories(include)
 
-set(SOURCE_FILES src/main.cpp src/JSON.cpp src/JSON.h src/JSONImpl.cpp src/JSONImpl.h test/JSONImplTest.h)
+set(SOURCE_FILES src/JSON.cpp src/JSONImpl.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(JSONTest ${SOURCE_FILES} test/RunTest.cpp)
