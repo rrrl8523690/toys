@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <vector>
+#include <string>
 
 namespace toy {
 	// Colors only supported in UNIX
@@ -39,12 +40,25 @@ namespace toy {
 		std::string _name;
 	};
 
+	class TestFixture {
+	public:
+		virtual ~TestFixture() = default;
+
+		virtual void init();
+
+		virtual void cleanUp();
+	};
+
+
 	std::vector<std::function<void()>> &allTests();
 }
 
+#define GET_MACRO(_1, _2, NAME, ...) NAME
+#define TEST(...) GET_MACRO(__VA_ARGS__, TEST_IMPL2, TEST_IMPL1, ...)(__VA_ARGS__)
+
 #define TEST_CLASS(NAME) TestClass_##NAME
 
-#define TEST(NAME) \
+#define TEST_IMPL2(NAME, FIXTURE_CLASS) \
 class TEST_CLASS(NAME) : public toy::Test \
 { \
 public: \
@@ -52,17 +66,29 @@ public: \
     _nTestCase = 0; \
     _nPassedCase = 0; \
     _name = #NAME; \
+    _fixture = new FIXTURE_CLASS(); \
   } \
+  ~TEST_CLASS(NAME) () { \
+    delete _fixture; \
+  } \
+  inline FIXTURE_CLASS *fixture() { \
+  return _fixture; \
+  }; \
   void run() { \
+    _fixture->init(); \
     testCases(); \
     summary(); \
+    _fixture->cleanUp(); \
   } \
   void testCases(); \
 private: \
+  FIXTURE_CLASS *_fixture; \
   static int _hack; \
 }; \
-int TEST_CLASS(NAME)::_hack = (toy::allTests().push_back([]() { TEST_CLASS(NAME)().run(); }), 0); \
+int TEST_CLASS(NAME)::_hack = (toy::allTests().push_back([]() { RUN_TEST(NAME); }), 0); \
 void TEST_CLASS(NAME)::testCases()
+
+#define TEST_IMPL1(NAME) TEST_IMPL2(NAME, toy::TestFixture)
 
 #define RUN_TEST(NAME) \
 do { \
@@ -75,7 +101,6 @@ do { \
     test(); \
   } \
 } while (0)
-
 
 #define EXPECT(condition) \
 do { \

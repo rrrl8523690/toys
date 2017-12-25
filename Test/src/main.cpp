@@ -12,12 +12,25 @@ TEST(Test2) {
 	EXPECT(2 == 2);
 }
 
-class A {
+class Fixture1 : public toy::TestFixture {
 public:
-	static void p() {
-		std::cerr << "!" << std::endl;
+	void init() {
+		x = 5;
 	}
+
+	int x;
+private:
 };
+
+TEST(Test3, Fixture1) {
+	EXPECT(_fixture->x == 5);
+	EXPECT(_fixture->x != 6);
+}
+
+TEST(Test4, Fixture1) {
+	EXPECT(_fixture->x == 6);
+	EXPECT(_fixture->x != 6);
+}
 
 int main() {
 	using namespace std;
