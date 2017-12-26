@@ -2,14 +2,23 @@
 // Created by Handa Wang on 9/24/17.
 //
 
-#include "../include/JSON.h"
+#include "JSON.h"
 
 namespace toy {
-//	TODO: do we need this?
-//	void JSON::typeCheck(toy::JSONType expectedType) const {
-//		if (_impl->type() != expectedType) {
-//			throw std::logic_error(
-//							std::string("The type at ") + (__FILE__) + " line " + (__LINE__) + " is not as expected");
-//		}
-//	}
+	JSON::JSON(const JSON &other) {
+		json_impl_.reset(other.json_impl_->copy());
+	}
+
+	JSON &JSON::operator=(const JSON &other) {
+		json_impl_.reset(other.json_impl_->copy());
+		return *this;
+	}
+
+	JSON::JSON(JSONImpl *json_impl) {
+		json_impl_.reset(json_impl);
+	}
+
+	std::string JSON::toString() {
+		return json_impl_->toString();
+	}
 }

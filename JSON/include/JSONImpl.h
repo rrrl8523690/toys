@@ -15,8 +15,29 @@
 
 // TODO: RE-design!!!!!
 namespace toy {
+	class JSONImpl {
+	public:
+		~JSONImpl() = default;
 
+		virtual JSONImpl *copy() const = 0;
 
+		virtual std::string toString() = 0;
+	};
+	namespace {
+		class JSONIntImpl : public JSONImpl {
+		public:
+			JSONIntImpl() = default;
+
+			JSONIntImpl(int value);
+
+			virtual JSONImpl *copy() const override;
+
+			virtual std::string toString() override;
+
+		private:
+			int value_;
+		};
+	}
 }
 
 
