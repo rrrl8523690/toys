@@ -51,6 +51,10 @@ TEST(JSON_STRING, JSONStringFixture) {
 	json1 = std::move(json2);
 	json2 = json1;
 	EXPECT(json1.toString() == json2.toString());
+	toy::JSON json3;
+	json3 = toy::JSON("test_string");
+	EXPECT(json3.type() == toy::JSONType::STRING);
+	EXPECT(json3.toString() == "\"test_string\"");
 }
 
 TEST(JSON_OBJECT) {
@@ -58,6 +62,9 @@ TEST(JSON_OBJECT) {
 	EXPECT(object.type() == toy::JSONType::OBJECT);
 	object["key"] = toy::JSON("value");
 	EXPECT(object["key"].toString() == "\"value\"");
+	EXPECT(object.toString() == R"({"key":"value"})");
+	object["key2"] = toy::JSON("value2");
+	EXPECT(object.toString() == R"({"key":"value","key2":"value2"})");
 }
 
 #endif //JSON_JSONVALUETEST_H
