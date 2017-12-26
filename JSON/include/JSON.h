@@ -15,6 +15,7 @@ namespace toy {
 	class JSON {
 	public:
 		static JSON createInt(int value);
+		static JSON createString(std::string value);
 
 		JSON(const JSON &other);
 

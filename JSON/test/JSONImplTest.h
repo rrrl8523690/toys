@@ -9,7 +9,6 @@
 #include "JSON.h"
 
 class JSONIntFixture1 : public toy::TestFixture {
-
 public:
 	JSONIntFixture1() : json_int_1_(toy::JSON::createInt(1)) {}
 
@@ -30,6 +29,27 @@ TEST(JSON_INT, JSONIntFixture1) {
 
 	moved_json = std::move(json); // Test move operator=
 	EXPECT(moved_json.toString() == "1");
+}
+
+class JSONStringFixture : public toy::TestFixture {
+public:
+	JSONStringFixture() : json_string_empty(toy::JSON::createString("")),
+	                      json_string_asdf(toy::JSON::createString("asdfghjkl")) {}
+
+	toy::JSON json_string_empty, json_string_asdf;
+};
+
+TEST(JSON_STRING, JSONStringFixture) {
+	toy::JSON &json1 = fixture()->json_string_empty, &json2 = fixture()->json_string_asdf;
+	EXPECT(json1.type() == toy::JSONType::STRING);
+	EXPECT(json2.type() == toy::JSONType::STRING);
+	EXPECT(json1.toString() == "\"\"");
+	EXPECT(json2.toString() == "\"asdfghjkl\"");
+	json1 = json2;
+	EXPECT(json1.toString() == json2.toString());
+	json1 = std::move(json2);
+	json2 = json1;
+	EXPECT(json1.toString() == json2.toString());
 }
 
 #endif //JSON_JSONVALUETEST_H

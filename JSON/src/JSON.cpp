@@ -9,6 +9,10 @@ namespace toy {
 		return JSON(new JSONIntImpl(value));
 	}
 
+	JSON JSON::createString(std::string value) {
+		return JSON(new JSONStringImpl(std::move(value)));
+	}
+
 	JSON::JSON(const JSON &other) {
 		json_impl_.reset(other.json_impl_->copy());
 	}

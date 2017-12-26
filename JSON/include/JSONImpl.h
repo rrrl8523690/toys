@@ -25,7 +25,7 @@ namespace toy {
 
 		virtual JSONImpl *copy() const = 0;
 
-		virtual std::string toString() = 0;
+		virtual std::string toString() const = 0;
 	};
 
 	class JSONIntImpl : public JSONImpl {
@@ -38,10 +38,26 @@ namespace toy {
 
 		JSONImpl *copy() const override;
 
-		std::string toString() override;
+		std::string toString() const override;
 
 	private:
 		int value_;
+	};
+
+	class JSONStringImpl : public JSONImpl {
+	public:
+		JSONStringImpl() = default;
+
+		JSONType type() const override;
+
+		JSONImpl *copy() const override;
+
+		explicit JSONStringImpl(std::string value);
+
+		std::string toString() const override;
+
+	private:
+		std::string value_;
 	};
 }
 
