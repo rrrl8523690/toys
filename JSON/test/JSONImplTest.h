@@ -7,6 +7,7 @@
 
 #include "Test.h"
 #include "JSON.h"
+#include <iostream>
 
 class JSONIntFixture1 : public toy::TestFixture {
 public:
@@ -53,7 +54,10 @@ TEST(JSON_STRING, JSONStringFixture) {
 }
 
 TEST(JSON_OBJECT) {
-
+	auto object = toy::JSON::createObject();
+	EXPECT(object.type() == toy::JSONType::OBJECT);
+	object["key"] = toy::JSON("value");
+	EXPECT(object["key"].toString() == "\"value\"");
 }
 
 #endif //JSON_JSONVALUETEST_H

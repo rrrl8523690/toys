@@ -16,86 +16,94 @@ namespace toy {
 
 	class JSON;
 
-	class JSONImpl {
-	public:
-		~JSONImpl() = default;
+	namespace {
+		class JSONImpl {
+		public:
+			~JSONImpl() = default;
 
-		virtual JSONType type() const = 0;
+			virtual JSONType type() const = 0;
 
-		virtual JSONImpl *copy() const = 0;
+			virtual JSONImpl *copy() const = 0;
 
-		virtual std::string toString() const = 0;
+			virtual std::string toString() const = 0;
 
-		friend class JSONObjectImpl;
+			friend class JSONObjectImpl;
 
-	protected:
-		virtual void appendAsString(std::string &buffer) const = 0;
-	};
+		protected:
+			virtual void appendAsString(std::string &buffer) const = 0;
+		};
 
-	class JSONIntImpl : public JSONImpl {
-	public:
-		JSONIntImpl() = default;
+		class JSONIntImpl : public JSONImpl {
+		public:
+			JSONIntImpl() = default;
 
-		explicit JSONIntImpl(int value);
+			explicit JSONIntImpl(int value);
 
-		JSONType type() const override;
+			JSONType type() const override;
 
-		JSONImpl *copy() const override;
+			JSONImpl *copy() const override;
 
-		std::string toString() const override;
+			std::string toString() const override;
 
-	protected:
-		void appendAsString(std::string &buffer) const override;
+		protected:
+			void appendAsString(std::string &buffer) const override;
 
-	private:
-		int value_;
-	};
+		private:
+			int value_;
+		};
 
-	class JSONStringImpl : public JSONImpl {
-	public:
-		JSONStringImpl() = default;
+		class JSONStringImpl : public JSONImpl {
+		public:
+			JSONStringImpl() = default;
 
-		explicit JSONStringImpl(std::string value);
+			explicit JSONStringImpl(std::string value);
 
-		JSONType type() const override;
+			JSONType type() const override;
 
-		JSONImpl *copy() const override;
+			JSONImpl *copy() const override;
 
-		std::string toString() const override;
+			std::string toString() const override;
 
-	protected:
-		void appendAsString(std::string &buffer) const override;
+		protected:
+			void appendAsString(std::string &buffer) const override;
 
-	private:
-		std::string value_;
-	};
+		private:
+			std::string value_;
+		};
 
-	class JSONObjectImpl : public JSONImpl {
-	public:
-		JSONObjectImpl() = default;
+		class JSONObjectImpl : public JSONImpl {
+		public:
+			JSONObjectImpl() = default;
 
-		explicit JSONObjectImpl(const std::map<std::string, std::unique_ptr<JSON>> &value);
+			explicit JSONObjectImpl(const std::map<std::string, std::unique_ptr<JSON>> &value);
 
-		explicit JSONObjectImpl(std::map<std::string, std::unique_ptr<JSON>> &&value);
+			explicit JSONObjectImpl(std::map<std::string, std::unique_ptr<JSON>> &&value);
 
-		JSONType type() const override;
+			JSONType type() const override;
 
-		JSONImpl *copy() const override;
+			JSONImpl *copy() const override;
 
-		std::string toString() const override;
+			std::string toString() const override;
 
-	protected:
-		void appendAsString(std::string &buffer) const override;
+			std::map<std::string, std::unique_ptr<toy::JSON>> &map();
 
-	private:
-		std::map<std::string, std::unique_ptr<toy::JSON>> value_;
-	};
+		protected:
+			void appendAsString(std::string &buffer) const override;
+
+		private:
+			std::map<std::string, std::unique_ptr<toy::JSON>> value_;
+		};
+	}
 
 	class JSON {
 	public:
+		JSON() = default;
+
 		JSON(int value);
 
 		JSON(std::string value);
+
+		static JSON createObject();
 
 		JSON(const JSON &other);
 
@@ -110,6 +118,8 @@ namespace toy {
 		JSONType type() const;
 
 		std::string toString();
+
+		JSON &operator[](const std::string &key);
 
 		friend class JSONObjectImpl;
 

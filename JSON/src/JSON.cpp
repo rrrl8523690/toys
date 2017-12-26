@@ -13,6 +13,12 @@ namespace toy {
 		json_impl_.reset(new JSONStringImpl(std::move(value)));
 	}
 
+	JSON JSON::createObject() {
+		JSON result;
+		result.json_impl_.reset(new JSONObjectImpl());
+		return result;
+	}
+
 	JSON::JSON(const JSON &other) {
 		json_impl_.reset(other.json_impl_->copy());
 	}
@@ -28,6 +34,17 @@ namespace toy {
 
 	std::string JSON::toString() {
 		return json_impl_->toString();
+	}
+
+	JSON &JSON::operator[](const std::string &key) {
+		if (type() != JSONType::OBJECT) {
+			throw std::logic_error("Not a json object");
+		}
+		auto json_object_impl = dynamic_cast<JSONObjectImpl *>(json_impl_.get());
+		if (!json_object_impl->map()[key]) {
+			json_object_impl->map()[key].reset(new JSON());
+		}
+		return *(json_object_impl->map()[key]);
 	}
 
 	JSONIntImpl::JSONIntImpl(int value) {
@@ -78,6 +95,11 @@ namespace toy {
 
 	std::string JSONStringImpl::toString() const {
 		return "\"" + value_ + "\"";
+	}
+
+
+	std::map<std::string, std::unique_ptr<toy::JSON>> &JSONObjectImpl::map() {
+		return value_;
 	}
 
 	JSONType JSONObjectImpl::type() const {
