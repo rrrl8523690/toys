@@ -10,12 +10,12 @@
 #include "JSONImpl.h"
 
 namespace toy {
-	enum class JSONType {
-		INT, DOUBLE, STRING, OBJECT, ARRAY, NUL
-	};
+
 
 	class JSON {
 	public:
+		static JSON createInt(int value);
+
 		JSON(const JSON &other);
 
 		JSON(JSON &&other) = default;
@@ -25,6 +25,8 @@ namespace toy {
 		JSON &operator=(JSON &&other) = default;
 
 		~JSON() = default;
+
+		JSONType type() const;
 
 		std::string toString();
 

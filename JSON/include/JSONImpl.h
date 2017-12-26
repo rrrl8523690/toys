@@ -10,34 +10,39 @@
 #include <string>
 #include <map>
 #include <exception>
-#include "JSON.h"
 
 
-// TODO: RE-design!!!!!
 namespace toy {
+	enum class JSONType {
+		INT, DOUBLE, STRING, OBJECT, ARRAY, NUL
+	};
+
 	class JSONImpl {
 	public:
 		~JSONImpl() = default;
+
+		virtual JSONType type() const = 0;
 
 		virtual JSONImpl *copy() const = 0;
 
 		virtual std::string toString() = 0;
 	};
-	namespace {
-		class JSONIntImpl : public JSONImpl {
-		public:
-			JSONIntImpl() = default;
 
-			JSONIntImpl(int value);
+	class JSONIntImpl : public JSONImpl {
+	public:
+		JSONIntImpl() = default;
 
-			virtual JSONImpl *copy() const override;
+		explicit JSONIntImpl(int value);
 
-			virtual std::string toString() override;
+		JSONType type() const override;
 
-		private:
-			int value_;
-		};
-	}
+		JSONImpl *copy() const override;
+
+		std::string toString() override;
+
+	private:
+		int value_;
+	};
 }
 
 

@@ -9,6 +9,10 @@ namespace toy {
 		value_ = value;
 	}
 
+	JSONType JSONIntImpl::type() const {
+		return JSONType::INT;
+	}
+
 	JSONImpl *JSONIntImpl::copy() const {
 		return new JSONIntImpl(value_);
 	}
