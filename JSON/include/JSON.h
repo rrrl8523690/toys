@@ -103,7 +103,7 @@ namespace toy {
 
 		JSON(std::string value);
 
-		static JSON createObject();
+		JSON(JSONType type);
 
 		JSON(const JSON &other);
 

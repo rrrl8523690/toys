@@ -13,10 +13,21 @@ namespace toy {
 		json_impl_.reset(new JSONStringImpl(std::move(value)));
 	}
 
-	JSON JSON::createObject() {
-		JSON result;
-		result.json_impl_.reset(new JSONObjectImpl());
-		return result;
+	JSON::JSON(JSONType type) {
+		switch (type) {
+			case JSONType::INT:
+				json_impl_.reset(new JSONIntImpl());
+				break;
+			case JSONType::STRING:
+				json_impl_.reset(new JSONStringImpl());
+				break;
+			case JSONType::OBJECT:
+				json_impl_.reset(new JSONObjectImpl());
+				break;
+			default:
+				break;
+				// TODO: add
+		}
 	}
 
 	JSON::JSON(const JSON &other) {

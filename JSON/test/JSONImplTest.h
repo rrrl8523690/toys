@@ -54,7 +54,7 @@ TEST(JSON_STRING, JSONStringFixture) {
 }
 
 TEST(JSON_OBJECT) {
-	auto object = toy::JSON::createObject();
+	auto object = toy::JSON(toy::JSONType::OBJECT);
 	EXPECT(object.type() == toy::JSONType::OBJECT);
 	object["key"] = toy::JSON("value");
 	EXPECT(object["key"].toString() == "\"value\"");
