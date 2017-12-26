@@ -10,7 +10,7 @@
 
 class JSONIntFixture1 : public toy::TestFixture {
 public:
-	JSONIntFixture1() : json_int_1_(toy::JSON::createInt(1)) {}
+	JSONIntFixture1() : json_int_1_(toy::JSON(1)) {}
 
 	toy::JSON json_int_1_;
 };
@@ -33,8 +33,8 @@ TEST(JSON_INT, JSONIntFixture1) {
 
 class JSONStringFixture : public toy::TestFixture {
 public:
-	JSONStringFixture() : json_string_empty(toy::JSON::createString("")),
-	                      json_string_asdf(toy::JSON::createString("asdfghjkl")) {}
+	JSONStringFixture() : json_string_empty(toy::JSON("")),
+	                      json_string_asdf(toy::JSON("asdfghjkl")) {}
 
 	toy::JSON json_string_empty, json_string_asdf;
 };
@@ -50,6 +50,10 @@ TEST(JSON_STRING, JSONStringFixture) {
 	json1 = std::move(json2);
 	json2 = json1;
 	EXPECT(json1.toString() == json2.toString());
+}
+
+TEST(JSON_OBJECT) {
+
 }
 
 #endif //JSON_JSONVALUETEST_H
