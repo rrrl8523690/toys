@@ -58,8 +58,10 @@ namespace toy {
 		return *(json_object_impl->map()[key]);
 	}
 
-	JSONIntImpl::JSONIntImpl(int value) {
-		value_ = value;
+	JSONIntImpl::JSONIntImpl() : value_(0) {
+	}
+
+	JSONIntImpl::JSONIntImpl(int value) : value_(value) {
 	}
 
 	JSONType JSONIntImpl::type() const {

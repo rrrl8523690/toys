@@ -19,6 +19,8 @@ namespace toy {
 	namespace {
 		class JSONImpl {
 		public:
+			JSONImpl() = default;
+
 			~JSONImpl() = default;
 
 			virtual JSONType type() const = 0;
@@ -35,7 +37,7 @@ namespace toy {
 
 		class JSONIntImpl : public JSONImpl {
 		public:
-			JSONIntImpl() = default;
+			JSONIntImpl();
 
 			explicit JSONIntImpl(int value);
 
@@ -44,6 +46,8 @@ namespace toy {
 			JSONImpl *copy() const override;
 
 			std::string toString() const override;
+
+			friend class JSON;
 
 		protected:
 			void appendAsString(std::string &buffer) const override;
@@ -112,6 +116,10 @@ namespace toy {
 		JSON &operator=(const JSON &other);
 
 		JSON &operator=(JSON &&other) = default;
+
+		JSON &operator=(int value);
+
+		JSON &operator=(std::string value);
 
 		~JSON() = default;
 
