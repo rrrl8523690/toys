@@ -30,12 +30,16 @@ TEST(JSON_INT, JSONIntFixture1) {
 
 	moved_json = std::move(json); // Test move operator=
 	EXPECT(moved_json.toString() == "1");
+
+	toy::JSON json_int_2;
+	json_int_2 = 2;
+	EXPECT(json_int_2.toString() == "2");
 }
 
 class JSONStringFixture : public toy::TestFixture {
 public:
-	JSONStringFixture() : json_string_empty(toy::JSON("")),
-	                      json_string_asdf(toy::JSON("asdfghjkl")) {}
+	JSONStringFixture() : json_string_empty(std::string("")),
+	                      json_string_asdf(std::string("asdfghjkl")) {}
 
 	toy::JSON json_string_empty, json_string_asdf;
 };
@@ -51,8 +55,12 @@ TEST(JSON_STRING, JSONStringFixture) {
 	json1 = std::move(json2);
 	json2 = json1;
 	EXPECT(json1.toString() == json2.toString());
+	json2 = json2;
+	EXPECT(json2.toString() == "\"asdfghjkl\"");
+	json2 = std::move(json2);
+	EXPECT(json2.toString() == "\"asdfghjkl\"");
 	toy::JSON json3;
-	json3 = toy::JSON("test_string");
+	json3 = std::string("test_string");
 	EXPECT(json3.type() == toy::JSONType::STRING);
 	EXPECT(json3.toString() == "\"test_string\"");
 }

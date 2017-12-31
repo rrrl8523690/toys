@@ -2,6 +2,8 @@
 // Created by Handa Wang on 9/24/17.
 //
 
+#include <iostream>
+#include <cassert>
 #include "JSON.h"
 
 namespace toy {
@@ -34,8 +36,21 @@ namespace toy {
 		json_impl_.reset(other.json_impl_->copy());
 	}
 
+	JSON::JSON(JSON &&other) noexcept {
+		json_impl_ = std::move(other.json_impl_);
+	}
+
 	JSON &JSON::operator=(const JSON &other) {
-		json_impl_.reset(other.json_impl_->copy());
+		if (json_impl_ && other.json_impl_ && type() == other.type()) {
+			json_impl_->forceAssign(other.json_impl_.get());
+		} else {
+			json_impl_.reset(other.json_impl_->copy());
+		}
+		return *this;
+	}
+
+	JSON &JSON::operator=(JSON &&other) noexcept {
+		json_impl_ = std::move(other.json_impl_);
 		return *this;
 	}
 
@@ -64,6 +79,14 @@ namespace toy {
 	JSONIntImpl::JSONIntImpl(int value) : value_(value) {
 	}
 
+	JSONType JSONImpl::type() const {
+		return JSONType::UNDEFINED;
+	}
+
+	void JSONIntImpl::init(int value) {
+		value_ = value;
+	}
+
 	JSONType JSONIntImpl::type() const {
 		return JSONType::INT;
 	}
@@ -76,8 +99,16 @@ namespace toy {
 		return std::to_string(value_);
 	}
 
+	void JSONIntImpl::forceAssign(const JSONImpl *other) {
+		init(dynamic_cast<const JSONIntImpl *>(other)->value_);
+	}
+
 	void JSONIntImpl::appendAsString(std::string &buffer) const {
 		buffer += toString();
+	}
+
+	void JSONStringImpl::init(std::string value) {
+		value_ = std::move(value);
 	}
 
 	JSONType JSONStringImpl::type() const {
@@ -89,27 +120,35 @@ namespace toy {
 	}
 
 	JSONStringImpl::JSONStringImpl(std::string value) {
-		value_ = std::move(value);
+		init(std::move(value));
 	}
 
 	void JSONStringImpl::appendAsString(std::string &buffer) const {
 		buffer += toString();
 	}
 
-	JSONObjectImpl::JSONObjectImpl(const std::map<std::string, std::unique_ptr<JSON>> &value) {
+	std::string JSONStringImpl::toString() const {
+		return "\"" + value_ + "\"";
+	}
+
+	void JSONStringImpl::forceAssign(const JSONImpl *other) {
+		init(dynamic_cast<const JSONStringImpl *>(other)->value_);
+	}
+
+	void JSONObjectImpl::init(const std::map<std::string, std::unique_ptr<toy::JSON>> &value) {
+		value_.clear();
 		for (auto &pair : value) {
 			value_[pair.first].reset(new JSON(*pair.second));
 		}
 	}
 
+	JSONObjectImpl::JSONObjectImpl(const std::map<std::string, std::unique_ptr<JSON>> &value) {
+		init(value);
+	}
+
 	JSONObjectImpl::JSONObjectImpl(std::map<std::string, std::unique_ptr<JSON>> &&value) {
 		value_ = std::move(value);
 	}
-
-	std::string JSONStringImpl::toString() const {
-		return "\"" + value_ + "\"";
-	}
-
 
 	std::map<std::string, std::unique_ptr<toy::JSON>> &JSONObjectImpl::map() {
 		return value_;
@@ -138,10 +177,13 @@ namespace toy {
 		buffer += "}";
 	}
 
-	// TODO: improve performance
 	std::string JSONObjectImpl::toString() const {
 		std::string result;
 		appendAsString(result);
 		return result;
+	}
+
+	void JSONObjectImpl::forceAssign(const JSONImpl *other) {
+		init(dynamic_cast<const JSONObjectImpl *>(other)->value_);
 	}
 }

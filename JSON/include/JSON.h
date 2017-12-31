@@ -11,7 +11,7 @@
 
 namespace toy {
 	enum class JSONType {
-		INT, DOUBLE, STRING, OBJECT, ARRAY, NUL
+		UNDEFINED, INT, DOUBLE, STRING, OBJECT, ARRAY, NUL
 	};
 
 	class JSON;
@@ -23,11 +23,13 @@ namespace toy {
 
 			~JSONImpl() = default;
 
-			virtual JSONType type() const = 0;
+			virtual JSONType type() const;
 
 			virtual JSONImpl *copy() const = 0;
 
 			virtual std::string toString() const = 0;
+
+			virtual void forceAssign(const JSONImpl *other) = 0;
 
 			friend class JSONObjectImpl;
 
@@ -47,12 +49,16 @@ namespace toy {
 
 			std::string toString() const override;
 
+			void forceAssign(const JSONImpl *other) override;
+
 			friend class JSON;
 
 		protected:
 			void appendAsString(std::string &buffer) const override;
 
 		private:
+			void init(int value);
+
 			int value_;
 		};
 
@@ -68,10 +74,14 @@ namespace toy {
 
 			std::string toString() const override;
 
+			void forceAssign(const JSONImpl *other) override;
+
 		protected:
 			void appendAsString(std::string &buffer) const override;
 
 		private:
+			void init(std::string value);
+
 			std::string value_;
 		};
 
@@ -89,12 +99,16 @@ namespace toy {
 
 			std::string toString() const override;
 
+			void forceAssign(const JSONImpl *other) override;
+
 			std::map<std::string, std::unique_ptr<toy::JSON>> &map();
 
 		protected:
 			void appendAsString(std::string &buffer) const override;
 
 		private:
+			void init(const std::map<std::string, std::unique_ptr<toy::JSON>> &value);
+
 			std::map<std::string, std::unique_ptr<toy::JSON>> value_;
 		};
 	}
@@ -111,15 +125,11 @@ namespace toy {
 
 		JSON(const JSON &other);
 
-		JSON(JSON &&other) = default;
+		JSON(JSON &&other) noexcept;
 
 		JSON &operator=(const JSON &other);
 
-		JSON &operator=(JSON &&other) = default;
-
-		JSON &operator=(int value);
-
-		JSON &operator=(std::string value);
+		JSON &operator=(JSON &&other) noexcept;
 
 		~JSON() = default;
 
