@@ -49,6 +49,8 @@ namespace toy {
 
 			std::string toString() const override;
 
+			int value() const;
+
 			void forceAssign(const JSONImpl *other) override;
 
 			friend class JSON;
@@ -123,6 +125,8 @@ namespace toy {
 
 		JSON(JSONType type);
 
+		JSON(std::initializer_list<std::pair<std::string, JSON>> args);
+
 		JSON(const JSON &other);
 
 		JSON(JSON &&other) noexcept;
@@ -136,6 +140,8 @@ namespace toy {
 		JSONType type() const;
 
 		std::string toString();
+
+		int getInt() const;
 
 		JSON &operator[](const std::string &key);
 

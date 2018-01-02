@@ -73,6 +73,14 @@ TEST(JSON_OBJECT) {
 	EXPECT(object.toString() == R"({"key":"value"})");
 	object["key2"] = toy::JSON("value2");
 	EXPECT(object.toString() == R"({"key":"value","key2":"value2"})");
+
+	toy::JSON obj = {{"key1", 1},
+	                 {"key2", {{"key4", 4}}},
+	                 {"key3", 3}};
+
+	EXPECT(obj["key1"].getInt() == 1);
+	EXPECT(obj["key2"]["key4"].getInt() == 4);
+	EXPECT(obj["key3"].getInt() == 3);
 }
 
 #endif //JSON_JSONVALUETEST_H

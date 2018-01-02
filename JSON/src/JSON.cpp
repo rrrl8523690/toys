@@ -32,6 +32,14 @@ namespace toy {
 		}
 	}
 
+	JSON::JSON(std::initializer_list<std::pair<std::string, JSON>> args) {
+		auto impl_ptr = new JSONObjectImpl();
+		for (auto &&pair : args) {
+			impl_ptr->map()[pair.first].reset(new JSON(pair.second));
+		}
+		json_impl_.reset(impl_ptr);
+	}
+
 	JSON::JSON(const JSON &other) {
 		json_impl_.reset(other.json_impl_->copy());
 	}
@@ -60,6 +68,13 @@ namespace toy {
 
 	std::string JSON::toString() {
 		return json_impl_->toString();
+	}
+
+	int JSON::getInt() const {
+		if (type() == JSONType::INT) {
+			return dynamic_cast<JSONIntImpl *>(json_impl_.get())->value();
+		}
+		throw std::logic_error("This is not a JSON of int.");
 	}
 
 	JSON &JSON::operator[](const std::string &key) {
@@ -97,6 +112,10 @@ namespace toy {
 
 	std::string JSONIntImpl::toString() const {
 		return std::to_string(value_);
+	}
+
+	int JSONIntImpl::value() const {
+		return value_;
 	}
 
 	void JSONIntImpl::forceAssign(const JSONImpl *other) {
